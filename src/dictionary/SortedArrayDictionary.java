@@ -2,6 +2,7 @@ package dictionary;
 
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.Objects;
 
 public class SortedArrayDictionary<K, V> implements Dictionary<K, V>{
 
@@ -27,17 +28,6 @@ public class SortedArrayDictionary<K, V> implements Dictionary<K, V>{
         data = new Entry[DEF_CAPACITY];
     }
 
-    public SortedArrayDictionary(Comparator<? super K> cmp) {
-        if (cmp != null) {
-            this.cmp = cmp;
-        } else {
-            // Natural ordering default
-            this.cmp = (k1, k2) -> ((Comparable<K>) k1).compareTo(k2);
-        }
-        size = 0;
-        data = new Entry[DEF_CAPACITY];
-    }
-
     @Override
     public V insert(K key, V value) {
         // if key already exists, update value
@@ -50,7 +40,7 @@ public class SortedArrayDictionary<K, V> implements Dictionary<K, V>{
         }
         // if array is full, double size
         if (size == data.length) {
-            Entry<K, V>[] tmp = new Entry[data.length * 2];
+            Entry[] tmp = new Entry[data.length * 2];
             System.arraycopy(data, 0, tmp, 0, data.length);
             data = tmp;
         }

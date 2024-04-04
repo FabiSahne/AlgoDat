@@ -7,7 +7,7 @@ public class HashDictionary<K, V> implements Dictionary<K, V> {
     private static class Entry<K, V> {
         K key;
         V value;
-        Entry<K, V> next;
+        Entry next;
         Entry(K key, V value) {
             this.key = key;
             this.value = value;
@@ -22,12 +22,7 @@ public class HashDictionary<K, V> implements Dictionary<K, V> {
 
     private static final int DEFAULT_CAPACITY = 11;
     private int size;
-    private Entry<K, V>[] data;
-
-    public HashDictionary() {
-        size = 0;
-        data = new Entry[DEFAULT_CAPACITY];
-    }
+    private Entry[] data;
 
     public HashDictionary(int capacity) {
         size = 0;
@@ -44,10 +39,7 @@ public class HashDictionary<K, V> implements Dictionary<K, V> {
                     factors++;
             }
             // if factors count is equals to 2 then it is prime number else it's not prime number
-            if(factors == 2)
-                return true;
-            else
-                return false;
+            return factors == 2;
         }
 
     private void doubleCapacity() {
@@ -56,8 +48,8 @@ public class HashDictionary<K, V> implements Dictionary<K, V> {
         while (!isPrime(newCapacity)) {
             newCapacity++;
         }
-        Entry<K, V>[] tmp = new Entry[newCapacity];
-        for (Entry<K, V> entry : data) {
+        Entry[] tmp = new Entry[newCapacity];
+        for (Entry entry : data) {
             while (entry != null) {
                 int hash = Math.floorMod(entry.key.hashCode(), tmp.length);
                 tmp[hash] = new Entry<>(entry.key, entry.value, tmp[hash]);
@@ -73,10 +65,10 @@ public class HashDictionary<K, V> implements Dictionary<K, V> {
         if (data[hash] == null) {
             data[hash] = new Entry<>(key, value);
         } else {
-            Entry<K, V> entry = data[hash];
+            Entry entry = data[hash];
             while (true) {
                 if (entry.key.equals(key)) {
-                    V oldValue = entry.value;
+                    V oldValue = (V) entry.value;
                     entry.value = value;
                     return oldValue;
                 }
@@ -102,7 +94,7 @@ public class HashDictionary<K, V> implements Dictionary<K, V> {
         } else {
             while (data[hash] != null) {
                 if (data[hash].key.equals(key)) {
-                    return data[hash].value;
+                    return (V) data[hash].value;
                 }
                 data[hash] = data[hash].next;
             }
@@ -116,8 +108,8 @@ public class HashDictionary<K, V> implements Dictionary<K, V> {
         if (data[hash] == null) {
             return null;
         } else {
-            Entry<K, V> prev = null;
-            Entry<K, V> entry = data[hash];
+            Entry prev = null;
+            Entry entry = data[hash];
             while (entry != null) {
                 if (entry.key.equals(key)) {
                     if (prev == null) {
@@ -126,7 +118,7 @@ public class HashDictionary<K, V> implements Dictionary<K, V> {
                         prev.next = entry.next;
                     }
                     size--;
-                    return entry.value;
+                    return (V) entry.value;
                 }
                 prev = entry;
                 entry = entry.next;
@@ -142,7 +134,7 @@ public class HashDictionary<K, V> implements Dictionary<K, V> {
 
     @Override
     public Iterator<Dictionary.Entry<K, V>> iterator() {
-        return new Iterator<Dictionary.Entry<K, V>>() {
+        return new Iterator<>() {
 
             private int i = 0;
 
@@ -161,9 +153,9 @@ public class HashDictionary<K, V> implements Dictionary<K, V> {
                 while (data[i] == null) {
                     i++;
                 }
-                Entry<K, V> entry = data[i];
+                Entry entry = data[i];
                 i++;
-                return new Dictionary.Entry<>(entry.key, entry.value);
+                return (Dictionary.Entry<K, V>) new Dictionary.Entry<>(entry.key, entry.value);
             }
         };
     }

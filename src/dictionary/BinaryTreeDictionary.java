@@ -2,7 +2,6 @@
 // 22.09.2022
 package dictionary;
 
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
