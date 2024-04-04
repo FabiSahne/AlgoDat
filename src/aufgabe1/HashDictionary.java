@@ -7,7 +7,7 @@ public class HashDictionary<K, V> implements Dictionary<K, V> {
     private static class Entry<K, V> {
         K key;
         V value;
-        Entry next;
+        Entry<K, V> next;
         Entry(K key, V value) {
             this.key = key;
             this.value = value;
