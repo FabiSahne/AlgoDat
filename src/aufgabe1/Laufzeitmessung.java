@@ -1,4 +1,4 @@
-package dictionary;
+package aufgabe1;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
@@ -9,7 +9,7 @@ public class Laufzeitmessung {
 
     public static void main(String[] args) throws FileNotFoundException {
 
-        file = new File("dictionary/dtengl.txt");
+        file = new File("aufgabe1/dtengl.txt");
 
         // test SortedArrayDictionary
         System.out.println("Test SortedArrayDictionary:");

@@ -1,6 +1,6 @@
 // O. Bittel
 // 22.09.2022
-package dictionary;
+package aufgabe1;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;

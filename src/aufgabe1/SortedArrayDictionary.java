@@ -1,8 +1,7 @@
-package dictionary;
+package aufgabe1;
 
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.Objects;
 
 public class SortedArrayDictionary<K, V> implements Dictionary<K, V>{
 
