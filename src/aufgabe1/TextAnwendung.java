@@ -6,7 +6,7 @@ public class TextAnwendung {
         Dictionary<String, String> dictionary = null;
         while (true) {
             System.out.println("Bitte geben Sie einen Befehl ein. <help> um Befehle anzuzeigen.");
-            String input = System.console().readLine();
+            String input = new java.util.Scanner(System.in).nextLine();
             if (input.equals("help")) {
                 System.out.println("Befehle:\n\t<help> - zeigt diese Hilfe an\n\t<create Implementierung> - Legt ein Wörterbuch an.\n\t<exit> - beendet das Programm\n\t<i deutsch englisch> - fuegt einen Eintrag hinzu\n\t<d deutsch> - loescht einen Eintrag\n\t<s deutsch> - sucht einen Eintrag\n\t<p> - zeigt alle Eintraege an");
             } else if (input.equals("exit")) {

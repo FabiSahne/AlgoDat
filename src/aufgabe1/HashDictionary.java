@@ -137,11 +137,16 @@ public class HashDictionary<K, V> implements Dictionary<K, V> {
         return new Iterator<>() {
 
             private int i = 0;
+            Entry prev = null;
+            Entry entry = null;
 
             @Override
             public boolean hasNext() {
-                for (int j = i; j < data.length; j++) {
-                    if (data[j] != null) {
+                if (data[i] != null && data[i].next != null) {
+                    return true;
+                }
+                for (int j = i+1; j < data.length; j++) {
+                    if (data[j] != null ) {
                         return true;
                     }
                 }
@@ -153,8 +158,20 @@ public class HashDictionary<K, V> implements Dictionary<K, V> {
                 while (data[i] == null) {
                     i++;
                 }
-                Entry entry = data[i];
-                i++;
+                if (prev == null) {
+                    entry = data[i];
+                    prev = entry;
+                } else if (hasNext()) {
+                    entry = entry.next;
+                    if (entry == null) {
+                        do {
+                            i++;
+                        } while (i < data.length && data[i] == null);
+                        entry = data[i];
+                    }
+                } else {
+                    throw new IndexOutOfBoundsException();
+                }
                 return (Dictionary.Entry<K, V>) new Dictionary.Entry<>(entry.key, entry.value);
             }
         };
