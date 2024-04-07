@@ -32,3 +32,5 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+/src/aufgabe2/data/
+/src/aufgabe2/doc/
