@@ -9,7 +9,7 @@ public class Laufzeitmessung {
 
     public static void main(String[] args) throws FileNotFoundException {
 
-        file = new File("aufgabe1/dtengl.txt");
+        file = new File("src/aufgabe1/dtengl.txt");
 
         // test SortedArrayDictionary
         System.out.println("Test SortedArrayDictionary:");

@@ -41,6 +41,76 @@ public class BinaryTreeDictionary<K extends Comparable<? super K>, V> implements
 
     private V oldValue = null;
 
+    private int getHeight(Node<K, V> p) {
+        return (p == null) ? -1 : p.height;
+    }
+
+    private int getBalance(Node<K, V> p) {
+        return (p == null) ? 0 : getHeight(p.right) - getHeight(p.left);
+    }
+
+
+    private Node<K, V> balance(Node<K, V> p) {
+        if (p == null) {
+            return null;
+        }
+        p.height = Math.max(getHeight(p.left), getHeight(p.right)) + 1;
+        if (getBalance(p) == -2) {
+            if (getBalance(p.left) <= 0) {
+                p = rotateRight(p);
+            } else {
+                p = rotateLeftRight(p);
+            }
+        } else if (getBalance(p) == 2) {
+            if (getBalance(p.right) >= 0) {
+                p = rotateLeft(p);
+            } else {
+                p = rotateRightLeft(p);
+            }
+        }
+        return p;
+    }
+
+    private Node<K, V> rotateRight(Node<K, V> p) {
+        assert p.left != null;
+        Node<K, V> q = p.left;
+        p.left = q.right;
+        if (p.left != null) {
+            p.left.parent = p;
+        }
+        q.right = p;
+        q.right.parent = q;
+        p.height = Math.max(getHeight(p.left), getHeight(p.right)) + 1;
+        q.height = Math.max(getHeight(q.left), getHeight(q.right)) + 1;
+        return q;
+    }
+
+    private Node<K, V> rotateLeft(Node<K, V> p) {
+        assert p.right != null;
+        Node<K, V> q = p.right;
+        p.right = q.left;
+        if (p.right != null) {
+            p.right.parent = p;
+        }
+        q.left = p;
+        q.left.parent = q;
+        p.height = Math.max(getHeight(p.left), getHeight(p.right)) + 1;
+        q.height = Math.max(getHeight(q.left), getHeight(q.right)) + 1;
+        return q;
+    }
+
+    private Node<K, V> rotateLeftRight(Node<K, V> p) {
+        assert p.left != null;
+        p.left = rotateLeft(p.left);
+        return rotateRight(p);
+    }
+
+    private Node<K, V> rotateRightLeft(Node<K, V> p) {
+        assert p.right != null;
+        p.right = rotateRight(p.right);
+        return rotateLeft(p);
+    }
+
 
     @Override
     public V insert(K key, V value) {
@@ -55,7 +125,7 @@ public class BinaryTreeDictionary<K extends Comparable<? super K>, V> implements
         if (p == null) {
             size++;
             oldValue = null;
-            return new Node<>(key, value);
+            p = new Node<>(key, value);
         }
         if (key.compareTo(p.key) < 0) {
             p.left = insertR(key, value, p.left);
@@ -71,6 +141,7 @@ public class BinaryTreeDictionary<K extends Comparable<? super K>, V> implements
             oldValue = p.value;
             p.value = value;
         }
+        p = balance(p);
         return p;
     }
 
@@ -128,6 +199,7 @@ public class BinaryTreeDictionary<K extends Comparable<? super K>, V> implements
                 p.right = removeR(min.key, p.right);
             }
         }
+        p = balance(p);
         return p;
     }
 
