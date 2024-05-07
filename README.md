@@ -15,3 +15,9 @@
 | n = 8000                    | 2 ms                  | 1 ms           | 4 ms                 |
 | n = 16000                   | 5 ms                  | 2 ms           | 6 ms                 |
 ---
+## Aufgabe 2: Graphen
+### 1. Realisierung der Klasse AdjecencyListDirectedGraph
+### 2. Realisierung der Klasse DepthFirstOrder
+### 3. Realisierung der Klasse TopologicalSort
+### 4. Realisierung der Klasse StrongComponents
+### 5. Realisierung der Klasse AnalyseWebSite
