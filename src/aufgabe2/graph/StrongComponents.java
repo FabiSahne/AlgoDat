@@ -5,10 +5,7 @@ package aufgabe2.graph;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * Klasse für Bestimmung aller strengen Komponenten.
@@ -30,7 +27,29 @@ public class StrongComponents<V> {
 	 * @param g gerichteter Graph.
 	 */
 	public StrongComponents(DirectedGraph<V> g) {
-		// ...
+		DepthFirstOrder<V> dfo = new DepthFirstOrder<>(g.invert());
+		List<V> p = dfo.postOrder();
+		List<V> pi = p.reversed();
+
+		Set<V> besucht = new HashSet<>();
+		for (V v : pi) {
+			if (!besucht.contains(v)) {
+				Set<V> compSet = new TreeSet<>();
+				dfs(g, v, besucht, compSet);
+				comp.put(numberOfComp, compSet);
+				numberOfComp++;
+			}
+		}
+	}
+
+	private void dfs(DirectedGraph<V> g, V v, Set<V> besucht, Set<V> compSet) {
+		besucht.add(v);
+		compSet.add(v);
+		for (V w : g.getSuccessorVertexSet(v)) {
+			if (!besucht.contains(w)) {
+				dfs(g, w, besucht, compSet);
+			}
+		}
 	}
 	
 	/**
@@ -43,7 +62,15 @@ public class StrongComponents<V> {
 
 	@Override
 	public String toString() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < numberOfComp; i++) {
+			sb.append("Component ").append(i).append(": ");
+			for (V v : comp.get(i)) {
+				sb.append(v).append(", ");
+			}
+			sb.append("\n");
+		}
+		return sb.toString();
 	}
 	
 		

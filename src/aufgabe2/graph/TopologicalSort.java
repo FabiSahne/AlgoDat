@@ -3,9 +3,7 @@
 
 package aufgabe2.graph;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Klasse zur Erstellung einer topologischen Sortierung.
@@ -22,7 +20,28 @@ public class TopologicalSort<V> {
 	 * @param g gerichteter Graph.
 	 */
 	public TopologicalSort(DirectedGraph<V> g) {
-        // ...
+		List<V> l = new LinkedList<>();
+		Queue<V> q = new LinkedList<>();
+		Map<V, Integer> inDegree = new HashMap<>();
+		for (V v : g.getVertexSet()) {
+			inDegree.put(v, g.getInDegree(v));
+			if (g.getInDegree(v) == 0) {
+				q.add(v);
+			}
+		}
+		while (!q.isEmpty()) {
+			V v = q.poll();
+			l.add(v);
+			for (V w : g.getSuccessorVertexSet(v)) {
+				inDegree.put(w, inDegree.get(w) - 1);
+				if (inDegree.get(w) == 0) {
+					q.add(w);
+				}
+			}
+		}
+		if (l.size() == g.getNumberOfVertexes()) {
+			ts = l;
+		}
     }
     
 	/**

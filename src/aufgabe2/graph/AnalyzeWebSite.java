@@ -19,8 +19,8 @@ import java.util.*;
 public class AnalyzeWebSite {
     public static void main(String[] args) throws IOException {
         // Graph aus Website erstellen und ausgeben:
-        //DirectedGraph<String> webSiteGraph = buildGraphFromWebSite("data/WebSiteKlein");
-        DirectedGraph<String> webSiteGraph = buildGraphFromWebSite("data/WebSiteGross");
+        DirectedGraph<String> webSiteGraph = buildGraphFromWebSite("/home/fabian/htwg/AlgoDat/Aufgaben/src/aufgabe2/data/WebSiteKlein");
+        //DirectedGraph<String> webSiteGraph = buildGraphFromWebSite("/home/fabian/htwg/AlgoDat/Aufgaben/src/aufgabe2/data/WebSiteGross");
         System.out.println("Anzahl Seiten: \t" + webSiteGraph.getNumberOfVertexes());
         System.out.println("Anzahl Links: \t" + webSiteGraph.getNumberOfEdges());
         //System.out.println(webSiteGraph);
@@ -38,7 +38,7 @@ public class AnalyzeWebSite {
      * Liest aus dem Verzeichnis dirName alle Web-Seiten und
      * baut aus den Links einen gerichteten Graphen.
      *
-     * @param dirName Name eines Verzeichnis
+     * @param dirName Name eines Verzeichnises
      * @return gerichteter Graph mit Namen der Web-Seiten als Knoten und Links als gerichtete Kanten.
      */
     private static DirectedGraph buildGraphFromWebSite(String dirName) throws IOException {
@@ -71,18 +71,68 @@ public class AnalyzeWebSite {
         double alpha = 0.5;
 
         // Definiere und initialisiere rankTable:
-        // Ihr Code: ...
+        double[] rankTable = new double[g.getNumberOfVertexes()];
+        Arrays.fill(rankTable, 1);
 
         // Iteration:
-        // Ihr Code: ...
+        for (int i = 0; i < nI; i++) {
+            double[] newRankTable = new double[g.getNumberOfVertexes()];
+            ListIterator<V> v = g.getVertexSet().stream().toList().listIterator();
+            while (v.hasNext()) {
+                double rank = 0;
+                ListIterator<V> w = g.getPredecessorVertexSet(v.next()).stream().toList().listIterator();
+                while (w.hasNext()) {
+                    rank += rankTable[w.nextIndex()] / g.getSuccessorVertexSet(w.next()).size();
+                }
+                newRankTable[v.nextIndex()] = (alpha * rank + (1 - alpha));
+                v.next();
+            }
+            rankTable = newRankTable;
+        }
 
         // Rank Table ausgeben (nur für data/WebSiteKlein):
-        // Ihr Code: ...
+        if (g.getNumberOfVertexes() < 100) {
+            System.out.println("\nRanktabelle:");
+            for (int i = 0; i < rankTable.length; i++) {
+                System.out.println("Page: "+ i + ",\t Rank: " + rankTable[i]);
+            }
+        }
 
         // Nach Ranks sortieren Top 100 ausgeben (nur für data/WebSiteGross):
-        // Ihr Code: ...
+        else {
+            System.out.println("\nTop 100:");
+            TreeMap<Double, Integer> sortedRankTable = new TreeMap<>();
+            for (int i = 0; i < rankTable.length; i++) {
+                sortedRankTable.put(rankTable[i], i);
+            }
+            int count = 0;
+            for (Map.Entry<Double, Integer> entry : sortedRankTable.descendingMap().entrySet()) {
+                if (count < 100) {
+                    System.out.println("Page: " + entry.getValue() + ",\t Rank: " + entry.getKey());
+                    count++;
+                } else {
+                    break;
+                }
+            }
+        }
         
         // Top-Seite mit ihren Vorgängern und Ranks ausgeben (nur für data/WebSiteGross):
+        if (g.getNumberOfVertexes() > 100) {
+            System.out.println("\nTop-Seite:");
+            double maxRank = 0;
+            int maxRankIndex = 0;
+            for (int i = 0; i < rankTable.length; i++) {
+                if (rankTable[i] > maxRank) {
+                    maxRank = rankTable[i];
+                    maxRankIndex = i;
+                }
+            }
+            System.out.println(maxRankIndex + " mit Rank: " + maxRank);
+            System.out.println("Vorgänger: ");
+            for (V v : g.getPredecessorVertexSet((V) g.getVertexSet().toArray()[maxRankIndex])) {
+                System.out.println(v + " mit Rank: " + rankTable[Integer.parseInt(v.toString().split("_")[1].split("\\.")[0])]);
+            }
+        }
         
     }
 }

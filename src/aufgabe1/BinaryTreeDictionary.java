@@ -244,7 +244,7 @@ public class BinaryTreeDictionary<K extends Comparable<? super K>, V> implements
 
             @Override
             public boolean hasNext() {
-                return p.right != null || parentOfRightMostAncestor(p) != null;
+                return p != null ;
             }
 
             @Override
@@ -252,8 +252,10 @@ public class BinaryTreeDictionary<K extends Comparable<? super K>, V> implements
                 if (!hasNext()) {
                     throw new NoSuchElementException();
                 }
+                Entry<K, V> entry = new Entry<>(p.key, p.value);
+
                 p = (p.right != null) ? leftMostDescendant(p.right) : parentOfRightMostAncestor(p);
-                return new Entry<>(p.key, p.value);
+                return entry;
             }
         };
     }

@@ -1,5 +1,7 @@
 package aufgabe1;
 
+import org.w3c.dom.ls.LSOutput;
+
 import java.util.Iterator;
 
 public class HashDictionary<K, V> implements Dictionary<K, V> {
@@ -134,15 +136,15 @@ public class HashDictionary<K, V> implements Dictionary<K, V> {
 
     @Override
     public Iterator<Dictionary.Entry<K, V>> iterator() {
+        System.out.println(data.length);
         return new Iterator<>() {
 
             private int i = 0;
-            Entry prev = null;
-            Entry entry = null;
-
+            //Entry prev = null;
+            Entry<K, V> entry = null;
             @Override
             public boolean hasNext() {
-                if (data[i] != null && data[i].next != null) {
+                if (entry != null && entry.next != null) {
                     return true;
                 }
                 for (int j = i+1; j < data.length; j++) {
@@ -155,22 +157,20 @@ public class HashDictionary<K, V> implements Dictionary<K, V> {
 
             @Override
             public Dictionary.Entry<K, V> next() {
-                while (data[i] == null) {
-                    i++;
-                }
-                if (prev == null) {
+                if (entry == null) {
+                    while (data[i] == null) {
+                        i++;
+                    }
                     entry = data[i];
-                    prev = entry;
-                } else if (hasNext()) {
-                    entry = entry.next;
-                    if (entry == null) {
+                } else {
+                    if (entry.next != null) {
+                        entry = entry.next;
+                    } else {
                         do {
                             i++;
-                        } while (i < data.length && data[i] == null);
+                        } while (data[i] == null);
                         entry = data[i];
                     }
-                } else {
-                    throw new IndexOutOfBoundsException();
                 }
                 return (Dictionary.Entry<K, V>) new Dictionary.Entry<>(entry.key, entry.value);
             }

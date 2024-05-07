@@ -1,11 +1,15 @@
 package aufgabe1;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+
 public class TextAnwendung {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException {
         Dictionary<String, String> dictionary = null;
         while (true) {
-            System.out.println("Bitte geben Sie einen Befehl ein. <help> um Befehle anzuzeigen.");
+            System.out.print("Bitte geben Sie einen Befehl ein. <help> um Befehle anzuzeigen.\n\uE0B0 ");
             String input = new java.util.Scanner(System.in).nextLine();
             if (input.equals("help")) {
                 System.out.println("Befehle:\n\t<help> - zeigt diese Hilfe an\n\t<create Implementierung> - Legt ein Wörterbuch an.\n\t<exit> - beendet das Programm\n\t<i deutsch englisch> - fuegt einen Eintrag hinzu\n\t<d deutsch> - loescht einen Eintrag\n\t<s deutsch> - sucht einen Eintrag\n\t<p> - zeigt alle Eintraege an");
@@ -90,6 +94,33 @@ public class TextAnwendung {
                 System.out.println("Alle Eintraege:");
                 for (Dictionary.Entry<String, String> entry : dictionary) {
                     System.out.println(entry.getKey() + " - " + entry.getValue());
+                }
+            } else if (input.startsWith("r")) {
+                if (dictionary == null) {
+                    System.out.println("Bitte erstellen Sie ein Wörterbuch.");
+                    continue;
+                }
+                String[] parts = input.split(" ");
+                if (parts.length == 3) {
+                    int n = Integer.parseInt(parts[1]);
+                    File f = new File(parts[2]);
+                    Scanner scanner = new Scanner(f);
+                    for (int i = 0; i < n; i++) {
+                        if (!scanner.hasNextLine()) {
+                            break;
+                        }
+                        String line = scanner.nextLine();
+                        String[] words = line.split(" ");
+                        dictionary.insert(words[0], words[1]);
+                    }
+                } else {
+                    File f = new File(parts[1]);
+                    Scanner scanner = new Scanner(f);
+                    while (scanner.hasNextLine()) {
+                        String line = scanner.nextLine();
+                        String[] words = line.split(" ");
+                        dictionary.insert(words[0], words[1]);
+                    }
                 }
             }
         }

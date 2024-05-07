@@ -60,9 +60,18 @@ public class SortedArrayDictionary<K, V> implements Dictionary<K, V>{
 
     @Override
     public V search(K key) {
-        for (int i = 0; i < size; i++) {
-            if (cmp.compare(data[i].key, key) == 0) {
-                return data[i].value;
+        // binary search
+        int left = 0;
+        int right = size - 1;
+        while (left <= right) {
+            int mid = (left + right) / 2;
+            int cmpResult = cmp.compare(data[mid].key, key);
+            if (cmpResult == 0) {
+                return data[mid].value;
+            } else if (cmpResult < 0) {
+                left = mid + 1;
+            } else {
+                right = mid - 1;
             }
         }
         return null;

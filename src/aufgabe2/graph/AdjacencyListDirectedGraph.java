@@ -32,43 +32,73 @@ public class AdjacencyListDirectedGraph<V> implements DirectedGraph<V> {
 
 	@Override
 	public boolean addVertex(V v) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		if (succ.containsKey(v)) {
+			return false;
+		}
+		succ.put(v, new TreeMap<>());
+		pred.put(v, new TreeMap<>());
+		return true;
     }
 
     @Override
     public boolean addEdge(V v, V w, double weight) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		// add required vertices
+		if (!succ.containsKey(v)) {
+			addVertex(v);
+		}
+		if (!succ.containsKey(w)) {
+			addVertex(w);
+		}
+		// check if edge already exists
+		if (succ.get(v).containsKey(w)) {
+			return false;
+		}
+
+		// add edge
+		succ.get(v).put(w, weight);
+		pred.get(w).put(v, weight);
+		numberEdge++;
+		return true;
     }
 
     @Override
     public boolean addEdge(V v, V w) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		return addEdge(v, w, 1.0);
     }
 
     @Override
     public boolean containsVertex(V v) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+		return succ.containsKey(v);
+	}
 
     @Override
     public boolean containsEdge(V v, V w) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		return succ.containsKey(v) && succ.get(v).containsKey(w);
     }
 
     @Override
     public double getWeight(V v, V w) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		if (!containsEdge(v, w)) {
+			throw new IllegalArgumentException("Edge does not exist.");
+		}
+		return succ.get(v).get(w);
     }
 
 	
     @Override
     public int getInDegree(V v) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		if (!containsVertex(v)) {
+			throw new IllegalArgumentException("Vertex does not exist.");
+		}
+		return pred.get(v).size();
     }
 
     @Override
     public int getOutDegree(V v) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		if (!containsVertex(v)) {
+			throw new IllegalArgumentException("Vertex does not exist.");
+		}
+		return succ.get(v).size();
     }
 	
 	@Override
@@ -78,34 +108,54 @@ public class AdjacencyListDirectedGraph<V> implements DirectedGraph<V> {
 
     @Override
     public Set<V> getPredecessorVertexSet(V v) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		if (!containsVertex(v)) {
+			throw new IllegalArgumentException("Vertex does not exist.");
+		}
+		return Collections.unmodifiableSet(pred.get(v).keySet());
     }
 
     @Override
     public Set<V> getSuccessorVertexSet(V v) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		if (!containsVertex(v)) {
+			throw new IllegalArgumentException("Vertex does not exist.");
+		}
+		return Collections.unmodifiableSet(succ.get(v).keySet());
     }
 
     @Override
     public int getNumberOfVertexes() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		return succ.size();
     }
 
     @Override
     public int getNumberOfEdges() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		return numberEdge;
     }
 	
 	@Override
     public 
 	DirectedGraph<V> invert() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		DirectedGraph<V> g = new AdjacencyListDirectedGraph<>();
+		for (V v : getVertexSet()) {
+			for (V w : getSuccessorVertexSet(v)) {
+				g.addEdge(w, v, getWeight(v, w));
+			}
+		}
+		return g;
 	}
 
 	
 	@Override
 	public String toString() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		StringBuilder sb = new StringBuilder();
+		for (V v : getVertexSet()) {
+			for (V w : getSuccessorVertexSet(v)) {
+				sb.append(v).append(" --> ");
+				sb.append(w).append(" weight = ").append(getWeight(v, w)).append(" ");
+				sb.append("\n");
+			}
+		}
+		return sb.toString();
 	}
 	
 	
@@ -131,20 +181,20 @@ public class AdjacencyListDirectedGraph<V> implements DirectedGraph<V> {
 			// 3 --> 7 weight = 1.0
 			// ...
 		
-		System.out.println("");
+		System.out.println();
 		System.out.println(g.getOutDegree(2));				// 2
 		System.out.println(g.getSuccessorVertexSet(2));	// 5, 6
 		System.out.println(g.getInDegree(6));				// 2
 		System.out.println(g.getPredecessorVertexSet(6));	// 2, 4
 		
-		System.out.println("");
+		System.out.println();
 		System.out.println(g.containsEdge(1,2));	// true
 		System.out.println(g.containsEdge(2,1));	// false
 		System.out.println(g.getWeight(1,2));	// 1.0	
 		g.addEdge(1, 2, 5.0);
 		System.out.println(g.getWeight(1,2));	// 5.0	
 		
-		System.out.println("");
+		System.out.println();
 		System.out.println(g.invert());
 			// 1 --> 5 weight = 1.0
 			// 2 --> 1 weight = 5.0
