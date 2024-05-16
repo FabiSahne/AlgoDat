@@ -27,17 +27,13 @@ public class DepthFirstOrder<V> {
     public DepthFirstOrder(DirectedGraph<V> g) {
         myGraph = g;
         Set<V> allVertices = myGraph.getVertexSet();
+        Set<V> besucht = new HashSet<>();
         for (V v : allVertices) {
             if (!preOrder.contains(v)) {
                 numberOfDFTrees++;
-                dfs(v);
+                dfs(v, besucht);
             }
         }
-    }
-
-    private void dfs(V v) {
-        Set<V> besucht = new HashSet<>();
-        dfs(v, besucht);
     }
 
     private void dfs(V v, Set<V> besucht) {
@@ -93,7 +89,7 @@ public class DepthFirstOrder<V> {
 
         DepthFirstOrder<Integer> dfs = new DepthFirstOrder<>(g);
         System.out.println(dfs.numberOfDFTrees());	// 2
-        System.out.println(dfs.preOrder());		// [1, 2, 5, 6, 3, 7, 4]
+        System.out.println(dfs.preOrder());		    // [1, 2, 5, 6, 3, 7, 4]
         System.out.println(dfs.postOrder());		// [5, 6, 2, 1, 4, 7, 3]
 
     }
