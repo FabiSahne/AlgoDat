@@ -19,8 +19,8 @@ import java.util.*;
 public class AnalyzeWebSite {
     public static void main(String[] args) throws IOException {
         // Graph aus Website erstellen und ausgeben:
-        DirectedGraph<String> webSiteGraph = buildGraphFromWebSite("/home/fabian/htwg/AlgoDat/Aufgaben/src/aufgabe2/data/WebSiteKlein");
-        //DirectedGraph<String> webSiteGraph = buildGraphFromWebSite("/home/fabian/htwg/AlgoDat/Aufgaben/src/aufgabe2/data/WebSiteGross");
+//        DirectedGraph<String> webSiteGraph = buildGraphFromWebSite("/home/fabian/htwg/AlgoDat/Aufgaben/src/aufgabe2/data/WebSiteKlein");
+        DirectedGraph<String> webSiteGraph = buildGraphFromWebSite("/home/fabian/htwg/AlgoDat/Aufgaben/src/aufgabe2/data/WebSiteGross");
         System.out.println("Anzahl Seiten: \t" + webSiteGraph.getNumberOfVertexes());
         System.out.println("Anzahl Links: \t" + webSiteGraph.getNumberOfEdges());
         //System.out.println(webSiteGraph);
@@ -71,21 +71,21 @@ public class AnalyzeWebSite {
         double alpha = 0.5;
 
         // Definiere und initialisiere rankTable:
-        double[] rankTable = new double[g.getNumberOfVertexes()];
-        Arrays.fill(rankTable, 1);
+        Map<V, Double> rankTable = new HashMap<>();
+        for (V v : g.getVertexSet()) {
+            rankTable.put(v, 1.0);
+        }
 
         // Iteration:
         for (int i = 0; i < nI; i++) {
-            double[] newRankTable = new double[g.getNumberOfVertexes()];
-            ListIterator<V> v = g.getVertexSet().stream().toList().listIterator();
-            while (v.hasNext()) {
-                double rank = 0;
-                ListIterator<V> w = g.getPredecessorVertexSet(v.next()).stream().toList().listIterator();
-                while (w.hasNext()) {
-                    rank += rankTable[w.nextIndex()] / g.getSuccessorVertexSet(w.next()).size();
+            Map<V, Double> newRankTable = new HashMap<>();
+            for (V v : g.getVertexSet()) {
+                double sum = 0;
+                for (V w : g.getPredecessorVertexSet(v)) {
+                    sum += rankTable.get(w) / g.getSuccessorVertexSet(w).size();
                 }
-                newRankTable[v.nextIndex()] = (alpha * rank + (1 - alpha));
-                v.next();
+                double rank = (1 - alpha) + alpha * sum;
+                newRankTable.put(v, rank);
             }
             rankTable = newRankTable;
         }
@@ -93,44 +93,35 @@ public class AnalyzeWebSite {
         // Rank Table ausgeben (nur für data/WebSiteKlein):
         if (g.getNumberOfVertexes() < 100) {
             System.out.println("\nRanktabelle:");
-            for (int i = 0; i < rankTable.length; i++) {
-                System.out.println("Page: "+ i + ",\t Rank: " + rankTable[i]);
+            for (V v : rankTable.keySet()) {
+                System.out.println("Page: "+ v + ",\t Rank: " + rankTable.get(v));
             }
         }
 
         // Nach Ranks sortieren Top 100 ausgeben (nur für data/WebSiteGross):
         else {
             System.out.println("\nTop 100:");
-            TreeMap<Double, Integer> sortedRankTable = new TreeMap<>();
-            for (int i = 0; i < rankTable.length; i++) {
-                sortedRankTable.put(rankTable[i], i);
+            TreeMap<Double, V> sortedRankTable = new TreeMap<>();
+            for (V v : rankTable.keySet()) {
+                sortedRankTable.put(rankTable.get(v), v);
             }
             int count = 0;
-            for (Map.Entry<Double, Integer> entry : sortedRankTable.descendingMap().entrySet()) {
+            for (V v : sortedRankTable.descendingMap().values()) {
                 if (count < 100) {
-                    System.out.println("Page: " + entry.getValue() + ",\t Rank: " + entry.getKey());
+                    System.out.println("Page: " + v + ",\t Rank: " + rankTable.get(v));
                     count++;
                 } else {
                     break;
                 }
             }
-        }
-        
-        // Top-Seite mit ihren Vorgängern und Ranks ausgeben (nur für data/WebSiteGross):
-        if (g.getNumberOfVertexes() > 100) {
+
+            // und top seite ausgeben
             System.out.println("\nTop-Seite:");
-            double maxRank = 0;
-            int maxRankIndex = 0;
-            for (int i = 0; i < rankTable.length; i++) {
-                if (rankTable[i] > maxRank) {
-                    maxRank = rankTable[i];
-                    maxRankIndex = i;
-                }
-            }
-            System.out.println(maxRankIndex + " mit Rank: " + maxRank);
-            System.out.println("Vorgänger: ");
-            for (V v : g.getPredecessorVertexSet((V) g.getVertexSet().toArray()[maxRankIndex])) {
-                System.out.println(v + " mit Rank: " + rankTable[Integer.parseInt(v.toString().split("_")[1].split("\\.")[0])]);
+            V v = sortedRankTable.descendingMap().values().iterator().next();
+            System.out.println("Page: " + v + ",\t Rank: " + rankTable.get(v));
+            System.out.println("\nVorgänger:");
+            for (V w : g.getPredecessorVertexSet(v)) {
+                System.out.println("Page: " + w + ",\t Rank: " + rankTable.get(w));
             }
         }
         

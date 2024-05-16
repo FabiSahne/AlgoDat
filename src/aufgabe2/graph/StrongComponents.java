@@ -27,15 +27,15 @@ public class StrongComponents<V> {
 	 * @param g gerichteter Graph.
 	 */
 	public StrongComponents(DirectedGraph<V> g) {
-		DepthFirstOrder<V> dfo = new DepthFirstOrder<>(g.invert());
+		DepthFirstOrder<V> dfo = new DepthFirstOrder<>(g);
 		List<V> p = dfo.postOrder();
 		List<V> pi = p.reversed();
-
+		DirectedGraph<V> gi = g.invert();
 		Set<V> besucht = new HashSet<>();
 		for (V v : pi) {
 			if (!besucht.contains(v)) {
 				Set<V> compSet = new TreeSet<>();
-				dfs(g, v, besucht, compSet);
+				dfs(gi, v, besucht, compSet);
 				comp.put(numberOfComp, compSet);
 				numberOfComp++;
 			}

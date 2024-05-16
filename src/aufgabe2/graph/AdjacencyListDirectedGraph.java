@@ -51,6 +51,8 @@ public class AdjacencyListDirectedGraph<V> implements DirectedGraph<V> {
 		}
 		// check if edge already exists
 		if (succ.get(v).containsKey(w)) {
+			succ.get(v).put(w, weight);
+			succ.get(w).put(v, weight);
 			return false;
 		}
 
