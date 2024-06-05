@@ -42,25 +42,19 @@ public class AdjacencyListDirectedGraph<V> implements DirectedGraph<V> {
 
     @Override
     public boolean addEdge(V v, V w, double weight) {
-		// add required vertices
-		if (!succ.containsKey(v)) {
-			addVertex(v);
-		}
-		if (!succ.containsKey(w)) {
-			addVertex(w);
-		}
-		// check if edge already exists
-		if (succ.get(v).containsKey(w)) {
-			succ.get(v).put(w, weight);
-			succ.get(w).put(v, weight);
-			return false;
-		}
 
-		// add edge
-		succ.get(v).put(w, weight);
-		pred.get(w).put(v, weight);
-		numberEdge++;
-		return true;
+        if (containsEdge(v, w)) {
+            succ.get(v).put(w, weight);
+            pred.get(w).put(v, weight);
+            return false;
+        } else {
+            addVertex(v);
+            addVertex(w);
+            succ.get(v).put(w, weight);
+            pred.get(w).put(v, weight);
+            numberEdge++;
+            return true;
+        }
     }
 
     @Override
