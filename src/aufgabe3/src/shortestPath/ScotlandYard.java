@@ -10,10 +10,7 @@ import java.awt.Color;
 import java.io.IOException;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 
 /**
@@ -23,6 +20,8 @@ import java.util.Scanner;
  * @since 26.09.2022
  */
 public class ScotlandYard {
+
+    static int[][] blocked = {{89, 128}, {105, 108}, {88, 117}, {86, 116}, {104, 116}};
 
     /**
      * Fabrikmethode zur Erzeugung eines gerichteten Graphens für den Scotland-Yard-Spielplan.
@@ -56,6 +55,11 @@ public class ScotlandYard {
                 case "Taxi" -> 2;
                 default -> 0;
             };
+
+            // für Teilaufgabe 4, östliche Themse-Brücken blockieren
+//            if (Arrays.stream(blocked).anyMatch(x -> x[0] == v && x[1] == w || x[0] == w && x[1] == v)) {
+//                weight = 100;
+//            } else
             if (sy_graph.containsEdge(v, w)) {
                 weight = Math.min(sy_graph.getWeight(v, w), weight);
             }
@@ -105,8 +109,8 @@ public class ScotlandYard {
 
         DirectedGraph<Integer> syGraph = getGraph();
 
-        Heuristic<Integer> syHeuristic = null; // Dijkstra
-        //Heuristic<Integer> syHeuristic = getHeuristic(); // A*
+        //Heuristic<Integer> syHeuristic = null; // Dijkstra
+        Heuristic<Integer> syHeuristic = getHeuristic(); // A*
 
         ShortestPath<Integer> sySp = new ShortestPath<Integer>(syGraph, syHeuristic);
 
