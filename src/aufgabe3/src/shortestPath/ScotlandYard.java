@@ -109,8 +109,8 @@ public class ScotlandYard {
 
         DirectedGraph<Integer> syGraph = getGraph();
 
-        //Heuristic<Integer> syHeuristic = null; // Dijkstra
-        Heuristic<Integer> syHeuristic = getHeuristic(); // A*
+        Heuristic<Integer> syHeuristic = null; // Dijkstra
+        //Heuristic<Integer> syHeuristic = getHeuristic(); // A*
 
         ShortestPath<Integer> sySp = new ShortestPath<Integer>(syGraph, syHeuristic);
 
